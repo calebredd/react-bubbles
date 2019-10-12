@@ -5,10 +5,6 @@ import Login from "./components/Login";
 import "./styles.scss";
 
 function App() {
-  const logout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
   const [colorList, setColorList] = useState([]);
 
   const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -27,9 +23,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="logout">
-          <button className="logoutButton" onClick={logout}>Logout</button>
-        </div>
         <Route exact path="/" component={Login} />
         <PrivateRoute path="/BubblePage" component={BubblePage} />
         {/* 

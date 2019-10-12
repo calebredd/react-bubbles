@@ -7,7 +7,7 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+  // console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -29,9 +29,16 @@ const ColorList = ({ colors, updateColors }) => {
       .then(res => {
         console.log(res.data);
         setEditing(false);
+        axiosWithAuth()
+          .get("colors")
+          .then(res2 => {
+            updateColors(res2.data);
+          })
+          .catch(err => console.error(err));
+
         // newColor = res.data;
-        updateColors(colors.filter(color => color.id != res.data.id), res.data);
-        window.location.reload();
+        // updateColors(colors.filter(color => color.id != res.data.id), res.data);
+        // window.location.reload();
       })
       .catch(err => console.error(err));
   };
@@ -44,6 +51,24 @@ const ColorList = ({ colors, updateColors }) => {
       .then(res => {
         // console.log(res.data);
         updateColors(colors.filter(colour => colour.id != color.id));
+      })
+      .catch(err => console.error(err));
+  };
+
+  const newColor = e => {
+    e.preventDefault();
+    // console.log(e.target.color.value);
+    // console.log(e.target.hexCode.value);
+    const newColor = {
+      color: e.target.color.value,
+      code: { hex: e.target.hexCode.value }
+    };
+    // console.log(newColor);
+    axiosWithAuth()
+      .post("colors", newColor)
+      .then(res => {
+        console.log(res.data);
+        updateColors(res.data);
       })
       .catch(err => console.error(err));
   };
@@ -97,8 +122,18 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className="spacer" />
       {/* stretch - build another form here to add a color */}
+      <div className="addForm">
+        <form onSubmit={e => newColor(e)}>
+          <label>Add New Color:</label>
+          <input type="text" name="color" placeholder="Color" />
+          <input type="text" name="hexCode" placeholder="Hex Code" />
+          <div className="button-row">
+            <button type="submit">Add Color</button>
+          </div>
+        </form>
+      </div>
+      <div className="spacer" />
     </div>
   );
 };
